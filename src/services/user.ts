@@ -1,5 +1,15 @@
 import { request } from 'umi';
 
+import { API_URL } from '@/constants';
+
+export async function queryMe(token: string) {
+  return request(`${API_URL}/operators/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 export async function query() {
   return request<API.CurrentUser[]>('/api/users');
 }

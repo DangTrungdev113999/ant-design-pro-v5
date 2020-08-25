@@ -13,7 +13,7 @@ export default defineConfig({
   },
   layout: {
     name: 'Ant Design Pro',
-    locale: true,
+    locale: false,
     siderWidth: 250,
   },
   locale: {
@@ -30,18 +30,18 @@ export default defineConfig({
   // umi routes: https://umijs.org/docs/routing
   routes: [
     {
-      path: '/user',
+      path: '/login',
       layout: false,
       routes: [
         {
           name: 'login',
-          path: '/user/login',
-          component: './user/login',
+          path: '/login',
+          component: './login',
         },
       ],
     },
     {
-      path: '/1',
+      path: '/',
       name: 'Hoạch toán giao dịch',
       icon: 'dashboard',
       component: './Welcome',

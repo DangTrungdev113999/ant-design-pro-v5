@@ -78,7 +78,7 @@ export interface GlobalHeaderRightProps {
 
 const NoticeIconView = () => {
   const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState || {};
+  const { user } = initialState || {};
   const [notices, setNotices] = useState<API.NoticeIconData[]>([]);
 
   useEffect(() => {
@@ -116,7 +116,7 @@ const NoticeIconView = () => {
   return (
     <NoticeIcon
       className={styles.action}
-      count={currentUser && currentUser.unreadCount}
+      count={3}
       onItemClick={(item) => {
         changeReadState(item.id);
       }}

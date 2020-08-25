@@ -1,12 +1,9 @@
-import { Button, Col, Input, Row, Form, message } from 'antd';
-import React, { useState, useCallback, useEffect } from 'react';
-import omit from 'omit.js';
+import { Form, Input } from 'antd';
 import { FormItemProps } from 'antd/es/form/FormItem';
-import { getFakeCaptcha } from '@/services/login';
-
+import React from 'react';
+import LoginContext from './LoginContext';
 import ItemMap from './map';
-import LoginContext, { LoginContextProps } from './LoginContext';
-import styles from './index.less';
+
 
 export type WrappedLoginItemProps = LoginItemProps;
 export type LoginItemKeyType = keyof typeof ItemMap;
@@ -20,9 +17,6 @@ export interface LoginItemProps extends Partial<FormItemProps> {
   style?: React.CSSProperties;
   placeholder?: string;
   buttonText?: React.ReactNode;
-  countDown?: number;
-  getCaptchaButtonText?: string;
-  updateActive?: LoginContextProps['updateActive'];
   type?: string;
   defaultValue?: string;
   customProps?: { [key: string]: unknown };
@@ -60,8 +54,6 @@ const LoginItem: React.FC<LoginItemProps> = (props) => {
     defaultValue,
     rules,
     name,
-    getCaptchaButtonText,
-    updateActive,
     type,
     ...restProps
   } = props;
@@ -93,7 +85,6 @@ Object.keys(ItemMap).forEach((key) => {
           {...props}
           type={key}
           {...context}
-          updateActive={context.updateActive}
         />
       )}
     </LoginContext.Consumer>

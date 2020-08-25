@@ -3,7 +3,6 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
-import { outLogin } from '@/services/login';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
@@ -12,25 +11,23 @@ export interface GlobalHeaderRightProps {
   menu?: boolean;
 }
 
-/**
- * 退出登录，并且将当前的 url 保存
- */
-const loginOut = async () => {
-  await outLogin();
-  const { redirect } = getPageQuery();
-  // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
-    history.replace({
-      pathname: '/user/login',
-      search: stringify({
-        redirect: window.location.href,
-      }),
-    });
-  }
-};
-
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
+
+
+  const loginOut = async () => {
+    const { redirect } = getPageQuery();
+    // Note: There may be security issues, please note
+    if (window.location.pathname !== '/login' && !redirect) {
+      history.replace({
+        pathname: '/login',
+        search: stringify({
+          redirect: window.location.href,
+        }),
+      });
+    }
+
+  };
 
   const onMenuClick = useCallback(
     (event: {
@@ -41,7 +38,8 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     }) => {
       const { key } = event;
       if (key === 'logout') {
-        setInitialState({ ...initialState, currentUser: undefined });
+        localStorage.removeItem('avy-token');
+        setInitialState({ ...initialState, user: {}, token: '' });
         loginOut();
         return;
       }
@@ -66,9 +64,9 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     return loading;
   }
 
-  const { currentUser } = initialState;
+  const { user } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!user || !user.name) {
     return loading;
   }
 
@@ -97,8 +95,8 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        <Avatar size="small" className={styles.avatar} src={user.avatar} alt="avatar" />
+        <span className={`${styles.name} anticon`}>{user.name}</span>
       </span>
     </HeaderDropdown>
   );
