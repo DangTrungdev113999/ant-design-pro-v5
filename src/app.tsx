@@ -8,38 +8,40 @@ import { ResponseError } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
 import { queryMe } from './services/user';
 
+export interface InitialStateTypes {
+  token?: string;
+  user?: API.CurrentUser;
+  settings?: LayoutSettings;
+} 
+
 const resetInitialState = () => {
   localStorage.removeItem('avy-token');
   return {
     token: '',
     settings: defaultSettings,
   };
-}
+};
 
-export async function getInitialState(): Promise<{
-  token?: string;
-  user?: API.CurrentUser;
-  settings?: LayoutSettings;
-}> {
+export async function getInitialState(): Promise<InitialStateTypes> {
   const token = localStorage.getItem('avy-token');
   if (history.location.pathname !== '/login' && token) {
     const response = await queryMe(token);
-      if (response?.data?.id) {
-        return {
-          token,
-          user: response.data,
-          settings: defaultSettings,
-        };
-      }
+    if (response?.data?.id) {
+      return {
+        token,
+        user: response.data,
+        settings: defaultSettings,
+      };
+    }
     return resetInitialState();
   }
   return resetInitialState();
 }
 
 export const layout = ({
-  initialState
+  initialState,
 }: {
-    initialState: { token?: string; settings?: LayoutSettings };
+  initialState: { token: string; user?: API.CurrentUser; settings: LayoutSettings };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
@@ -48,7 +50,7 @@ export const layout = ({
     onPageChange: () => {
       if (!initialState?.token && history.location.pathname !== '/login') {
         history.push('/login');
-      };
+      }
     },
     menuHeaderRender: undefined,
     ...initialState?.settings,
@@ -77,7 +79,8 @@ const errorHandler = (error: ResponseError) => {
   const { response, data } = error;
 
   if (response && response.status) {
-    const errorText = data.description || codeMessage[response.status] || response.statusText;
+    const errorText =
+      data.description || data.message || codeMessage[response.status] || response.statusText;
     const { status, url } = response;
 
     notification.error({

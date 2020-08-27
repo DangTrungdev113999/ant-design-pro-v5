@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
 import { Checkbox } from 'antd';
-import { Link, SelectLang, useModel } from 'umi';
+import { Link, SelectLang } from 'umi';
+import { useRequest } from '@umijs/hooks';
 
 import logo from '@/assets/logo.png';
 import Footer from '@/components/Footer';
-import { LoginParamsType } from '@/services/auth';
+import { login } from '@/services/auth';
+import { replaceGoto } from '@/utils/utils';
 import LoginFrom from './components';
 import styles from './style.less';
 
-
-const {  Username, Password,  Submit } = LoginFrom;
-
+const { Username, Password, Submit } = LoginFrom;
 
 const Login: React.FC = () => {
-  const [submitting, setSubmitting] = useState(false);
   const [autoLogin, setAutoLogin] = useState(true);
-  const { login } = useModel('auth', model => ({  login: model.login }));
 
-  const handleSubmit = async (values: LoginParamsType) => {
-    setSubmitting(true);
-    await login(values)
-    setSubmitting(false);
-  };
-
+  const { loading, run } = useRequest(login, {
+    manual: true,
+    onSuccess: (result) => {
+      if (result.status === 'ok') {
+        localStorage.setItem('avy-token', result.data.token);
+        replaceGoto();
+      }
+    },
+  });
 
   return (
     <div className={styles.container}>
@@ -41,37 +42,36 @@ const Login: React.FC = () => {
         </div>
 
         <div className={styles.main}>
-          <LoginFrom onSubmit={handleSubmit}>
+          <LoginFrom onSubmit={run}>
+            <Username
+              name="phone"
+              placeholder="Số điện thoại"
+              defaultValue="+84378345621"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng nhập số điện thoại',
+                },
+              ]}
+            />
 
-              <Username
-                name="phone"
-                placeholder="Số điện thoại"
-                defaultValue="+84378345621"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Vui lòng nhập số điện thoại',
-                  },
-                ]}
-              />
-            
-              <Password
-                name="password"
-                placeholder=" Mật khẩu"
-                defaultValue="123456"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Vui lòng nhập mật khẩu！',
-                  },
-                ]}
-              />
+            <Password
+              name="password"
+              placeholder=" Mật khẩu"
+              defaultValue="123456"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng nhập mật khẩu！',
+                },
+              ]}
+            />
             <div>
               <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
                 Nhớ tài khoản
               </Checkbox>
             </div>
-            <Submit loading={submitting}>Đăng nhập</Submit>
+            <Submit loading={loading}>Đăng nhập</Submit>
           </LoginFrom>
         </div>
       </div>

@@ -2,9 +2,7 @@
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -41,7 +39,7 @@ export default defineConfig({
       ],
     },
     {
-      path: '/',
+      path: '/1',
       name: 'Hoạch toán giao dịch',
       icon: 'dashboard',
       component: './Welcome',
@@ -129,16 +127,10 @@ export default defineConfig({
       ],
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      icon: 'dashboard',
-      component: './Welcome',
-    },
-    {
       path: '/welcome',
       name: 'welcome',
       icon: 'smile',
-      component: './Welcome',
+      component: './ListTableList',
     },
     {
       path: '/admin',
@@ -156,14 +148,25 @@ export default defineConfig({
       ],
     },
     {
-      name: 'list.table-list',
-      icon: 'table',
-      path: '/list',
-      component: './ListTableList',
+      path: '/account',
+      name: 'Tài khoản',
+      icon: 'user',
+      routes: [
+        {
+          path: '/account/center',
+          name: 'Thông tin',
+          component: './Account/Center',
+        },
+        {
+          path: '/account/settings',
+          name: 'Cài đặt',
+          component: './Account/Settings',
+        },
+      ],
     },
     {
       path: '/',
-      redirect: '/welcome',
+      redirect: '/1',
     },
     {
       component: './404',

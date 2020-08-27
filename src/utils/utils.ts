@@ -36,3 +36,35 @@ export const getPageQuery = () => {
 
   return {};
 };
+
+export const replaceGoto = () => {
+  const urlParams = new URL(window.location.href);
+  const params = getPageQuery();
+
+  let { redirect } = params as { redirect: string };
+  if (redirect) {
+    const redirectUrlParams = new URL(redirect);
+    if (redirectUrlParams.origin === urlParams.origin) {
+      redirect = redirect.substr(urlParams.origin.length);
+      if (redirect.match(/^\/.*#/)) {
+        redirect = redirect.substr(redirect.indexOf('#'));
+      }
+    } else {
+      window.location.href = '/';
+      return;
+    }
+  }
+  window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/');
+};
+
+export const createImageFormData = (image: File, body: Record<string, string>) => {
+  const data = new FormData();
+
+  data.append('file', image);
+
+  Object.keys(body).forEach((key) => {
+    data.append(key, body[key]);
+  });
+
+  return data;
+};

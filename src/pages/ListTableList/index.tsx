@@ -79,7 +79,7 @@ const TableList: React.FC<{}> = () => {
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '规则名称',
+      title: 'name',
       dataIndex: 'name',
       rules: [
         {
@@ -89,30 +89,30 @@ const TableList: React.FC<{}> = () => {
       ],
     },
     {
-      title: '描述',
+      title: 'desc',
       dataIndex: 'desc',
       valueType: 'textarea',
     },
     {
-      title: '服务调用次数',
+      title: 'callNo',
       dataIndex: 'callNo',
       sorter: true,
       hideInForm: true,
-      renderText: (val: string) => `${val} 万`,
+      renderText: (val: string) => `${val} val`,
     },
     {
-      title: '状态',
+      title: 'status',
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        0: { text: '关闭', status: 'Default' },
-        1: { text: '运行中', status: 'Processing' },
-        2: { text: '已上线', status: 'Success' },
-        3: { text: '异常', status: 'Error' },
+        0: { text: 'status', status: 'Default' },
+        1: { text: 'status', status: 'Processing' },
+        2: { text: 'status', status: 'Success' },
+        3: { text: 'status', status: 'Error' },
       },
     },
     {
-      title: '上次调度时间',
+      title: 'updatedAt',
       dataIndex: 'updatedAt',
       sorter: true,
       valueType: 'dateTime',
@@ -129,7 +129,7 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: '操作',
+      title: 'option',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
@@ -140,10 +140,10 @@ const TableList: React.FC<{}> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            option
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a href="">vertical</a>
         </>
       ),
     },
@@ -152,12 +152,12 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageContainer>
       <ProTable<TableListItem>
-        headerTitle="查询表格"
+        headerTitle="headerTitle"
         actionRef={actionRef}
         rowKey="key"
         toolBarRender={() => [
           <Button type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined /> 新建
+            <PlusOutlined /> primary
           </Button>,
         ]}
         request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
@@ -170,9 +170,9 @@ const TableList: React.FC<{}> = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择 <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a> 项&nbsp;&nbsp;
+              extra <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a> 项&nbsp;&nbsp;
               <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
+                span {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
               </span>
             </div>
           }
@@ -184,9 +184,9 @@ const TableList: React.FC<{}> = () => {
               actionRef.current?.reloadAndRest();
             }}
           >
-            批量删除
+            primary
           </Button>
-          <Button type="primary">批量审批</Button>
+          <Button type="primary">Button</Button>
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>

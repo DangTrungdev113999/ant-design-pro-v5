@@ -39,6 +39,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       const { key } = event;
       if (key === 'logout') {
         localStorage.removeItem('avy-token');
+        // @ts-ignore
         setInitialState({ ...initialState, user: {}, token: '' });
         loginOut();
         return;
