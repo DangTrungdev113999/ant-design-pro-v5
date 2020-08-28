@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Form, Input, Row, Button, Divider, notification, Upload, Avatar, Spin } from 'antd';
-import { useModel } from 'umi';
 import { useRequest } from '@umijs/hooks';
 
-import { InitialStateTypes } from '@/app';
 import { updateMe, uploadAvatar } from '@/services/user';
+import { useInitialState } from '@/hoocks';
 
 import styles from '../styles.less';
 
@@ -18,10 +17,9 @@ const layout = {
 type FormNameTypes = 'name' | 'password' | 'repassword' | 'avatar';
 
 const UserInfor: FC = () => {
-  const [avatatPreview, setAvatarPreview] = useState<string>(''); 
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const [avatatPreview, setAvatarPreview] = useState<string>('');
+  const { token, user, initialState } = useInitialState();
   const [form] = Form.useForm();
-  const { token, user }: InitialStateTypes = initialState || {};
 
   useEffect(() => {
     setAvatarPreview(user?.avatar as string);
@@ -34,7 +32,7 @@ const UserInfor: FC = () => {
   const updateCurrentUserSideEffect = useRequest(updateMe, {
     manual: true,
     fetchKey: (_, fields) => fields?.name || fields?.password,
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result.status === 'ok') {
         // @ts-ignore
         setInitialState({
@@ -57,14 +55,13 @@ const UserInfor: FC = () => {
 
   const uploadAvatarSideEffect = useRequest(uploadAvatar, {
     manual: true,
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result?.status === 'ok') {
         updateCurrentUserSideEffect.run(token as string, { avatar: result?.data?.id });
         setAvatarPreview(result?.data?.url || '');
       }
-    }
+    },
   });
-
 
   const onUpdateUserInfor = async (formName: FormNameTypes[]) => {
     const fields = await form.validateFields(formName);
@@ -139,7 +136,9 @@ const UserInfor: FC = () => {
             name="avatar"
             listType="picture-card"
             showUploadList={false}
-            onChange={(info) => uploadAvatarSideEffect.run(token as string, info.file.originFileObj as File)}
+            onChange={(info) =>
+              uploadAvatarSideEffect.run(token as string, info.file.originFileObj as File)
+            }
           >
             <Avatar
               src={

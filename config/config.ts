@@ -34,15 +34,15 @@ export default defineConfig({
         {
           name: 'login',
           path: '/login',
-          component: './login',
+          component: './Login',
         },
       ],
     },
     {
-      path: '/1',
+      path: '/accounting',
       name: 'Hoạch toán giao dịch',
       icon: 'dashboard',
-      component: './Welcome',
+      component: './Accounting',
     },
     {
       path: '/2',
@@ -166,7 +166,7 @@ export default defineConfig({
     },
     {
       path: '/',
-      redirect: '/1',
+      redirect: '/accounting',
     },
     {
       component: './404',

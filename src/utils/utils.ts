@@ -1,5 +1,7 @@
+/* eslint-disable no-param-reassign */
 import { parse } from 'querystring';
-
+import moment from 'moment';
+import { QueryParamsType } from '@/hoocks/useFetchTableData';
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
@@ -68,3 +70,54 @@ export const createImageFormData = (image: File, body: Record<string, string>) =
 
   return data;
 };
+
+export function toQueryString(params: QueryParamsType) {
+  return Object.keys(params)
+    .reduce((mem, key) => {
+      if (params[key]) {
+        return `${mem}${key}=${encodeURIComponent(params[key])}&`;
+      }
+      return mem;
+    }, '?')
+    .slice(0, -1);
+}
+
+export function timeFormatter(time: any, format = 'DD/MM/YYYY') {
+  return moment(time).format(format);
+}
+
+export function updateLocationWithQuery(history: any, queryPrams: QueryParamsType) {
+  history?.push({
+    pathname: window.location.pathname,
+    search: toQueryString(queryPrams),
+  });
+}
+
+export function showTotal(pagination: any) {
+  const pageSize = pagination?.pageSize || 10;
+  const current = pagination?.current || 1;
+  return () =>
+    `${pageSize * current - pageSize + 1} - ${pageSize * current} trên tổng ${pagination?.total}`;
+}
+
+export const normalizeParams = (params: QueryParamsType) => {
+  const queryParams: QueryParamsType = {
+    ...params,
+    num_page: params.current,
+    page_size: params.pageSize,
+  };
+  delete params.filters;
+  delete queryParams.current;
+  delete queryParams.pageSize;
+  return queryParams;
+};
+
+// TODO findout
+export function parseNumberWithDot(value = 0) {
+  if (!value) {
+    return '0';
+  }
+  return Math.round(value)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}

@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
-import { history, useModel } from 'umi';
+import { history } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import { stringify } from 'querystring';
+import useInitialState from '@/hoocks/useInitialState';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -12,8 +13,7 @@ export interface GlobalHeaderRightProps {
 }
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
-  const { initialState, setInitialState } = useModel('@@initialState');
-
+  const { initialState, setInitialState } = useInitialState();
 
   const loginOut = async () => {
     const { redirect } = getPageQuery();
@@ -39,7 +39,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       const { key } = event;
       if (key === 'logout') {
         localStorage.removeItem('avy-token');
-        // @ts-ignore
         setInitialState({ ...initialState, user: {}, token: '' });
         loginOut();
         return;
