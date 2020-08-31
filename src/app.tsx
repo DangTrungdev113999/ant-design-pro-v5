@@ -12,7 +12,7 @@ export interface InitialStateTypes {
   token?: string;
   user?: API.CurrentUser;
   settings?: LayoutSettings;
-} 
+}
 
 const resetInitialState = () => {
   localStorage.removeItem('avy-token');

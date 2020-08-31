@@ -31,11 +31,17 @@
     "test:component": "umi test ./src/components",
     "tsc": "tsc"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged"
+    }
+  },
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
     "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
     "**/*.{js,jsx,tsx,ts,less,md,json}": [
-      "prettier --write"
+      "prettier --write",
+      "git add"
     ]
   },
   "browserslist": [
@@ -91,6 +97,7 @@
     "@umijs/preset-ui": "^2.0.9",
     "@umijs/yorkie": "^2.0.3",
     "carlo": "^0.9.46",
+    "check-prettier": "^1.0.3",
     "cross-env": "^7.0.0",
     "cross-port-killer": "^1.1.1",
     "detect-installer": "^1.0.1",
@@ -102,12 +109,19 @@
     "jsdom-global": "^3.0.2",
     "lint-staged": "^10.0.0",
     "mockjs": "^1.0.1-beta3",
-    "prettier": "^2.0.1",
+    "prettier": "^2.1.1",
     "pro-download": "1.0.1",
     "puppeteer-core": "^5.0.0",
     "stylelint": "^13.0.0"
   },
   "engines": {
     "node": ">=10.0.0"
-  }
+  },
+  "checkFiles": [
+    "src/**/*.js*",
+    "src/**/*.ts*",
+    "src/**/*.less",
+    "config/**/*.js*",
+    "scripts/**/*.js"
+  ]
 }

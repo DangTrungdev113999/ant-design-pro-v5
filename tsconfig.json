@@ -17,6 +17,11 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "strict": true,
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ],
     "paths": {
       "@/*": ["./src/*"],
       "@@/*": ["./src/.umi/*"]

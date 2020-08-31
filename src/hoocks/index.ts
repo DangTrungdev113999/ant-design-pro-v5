@@ -1,5 +1,5 @@
 import useContructor from './useContructor';
 import useInitialState from './useInitialState';
-import useFetchTableData from './useFetchTableData';
+import useHandleTableData from './useHandleTableData';
 
-export { useContructor, useInitialState, useFetchTableData };
+export { useContructor, useInitialState, useHandleTableData };

@@ -29,12 +29,12 @@ const Wrapper = styled.div<WrapperProps>`
 
 const WrapperConent = styled.div<WrapperConentProps>`
   display: flex;
-  width: ${({ width }) => width || 200}px;
-  ${({ block }) => block && 'width: 100%'}
   justify-content: space-between;
   align-items: center;
   padding: 5px 8px;
-  background: #ffffff;
+  width: ${({ width }) => width || 200}px;
+  ${({ block }) => (block ? 'width: 100%;' : null)}
+  background: #fff;
   border: 1px solid #d9d9d9;
   box-sizing: border-box;
   border-radius: 4px;
@@ -102,9 +102,9 @@ interface DropdownPickerTypes {
   values: string;
   label: string;
   m?: string;
-  button?: boolean;
   width?: string;
   block?: boolean;
+  button?: boolean;
   radio?: boolean;
   setValues?: any;
   blacklistReasons?: boolean;

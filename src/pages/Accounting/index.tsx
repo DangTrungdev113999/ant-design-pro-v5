@@ -1,6 +1,8 @@
-import React, { FC, useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import React, { FC, useEffect, useState, Fragment } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Table, Form, Input, Row, Col, Typography, Button } from 'antd';
+import { Card, Table, Form, Input, Row, Col, Typography, Button, Modal, notification } from 'antd';
 import {
   parseNumberWithDot,
   timeFormatter,
@@ -8,10 +10,10 @@ import {
   showTotal,
 } from '@/utils/utils';
 import { BORROW_METHOD_TYPES, DEBT_STATUS_NAME } from '@/constants';
-import { queryDebtList } from '@/services/accounting';
-import { useFetchTableData } from '@/hoocks';
+import { queryDebtList, queryProducts, updateProduct, removeProduct } from '@/services/accounting';
+import { useHandleTableData } from '@/hoocks';
 import DropdownPicker from '@/components/DropdownPiicker';
-import { FilterOutlined } from '@ant-design/icons';
+import { FilterOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -44,7 +46,7 @@ const defaultQuery: QueryParamsDebtListTypes = {
   num_day_late: 'undueDebt,dueDebt,1-3,4-10,11-30,over-90',
 };
 
-const FILTER_OPTION = {
+const TABLE_FILTER_OPTION = {
   borrow_method: {
     label: 'Hình thức vay:',
     block: true,
@@ -87,10 +89,10 @@ const Accounting: FC<AccountingPropsType> = ({ location, history }) => {
     from_date: locationQuery.from_date || defaultQuery.from_date,
   });
 
-  const { tableProps, fetchData, handleFilterTable } = useFetchTableData(queryDebtList, {
-    query,
-    setQueryParams,
-    history
+  const { tableProps, fetchData, handleFilterTable, handleRemoveItem } = useHandleTableData({
+    fetchData: queryProducts,
+    updateItem: updateProduct,
+    removeItem: removeProduct,
   });
 
   const searchFormTable = (
@@ -109,64 +111,66 @@ const Accounting: FC<AccountingPropsType> = ({ location, history }) => {
     </Form>
   );
 
-  const columns: any = [
+  const handleRemvoeProduct = (productId: string) => {
+    Modal.confirm({
+      title: 'Bạn có chắc chắn muốn xóa sản phẩm vay này ?',
+      okText: 'Đồng ý',
+      cancelText: 'Huỷ',
+      onOk: async () => {
+        await handleRemoveItem({ productId });
+        notification.success({
+          message: 'Xóa sản phẩm thành công',
+        });
+      },
+    });
+  };
+
+  const columns = [
     {
       title: 'ID',
-      dataIndex: 'debt_id',
-      align: 'center',
+      dataIndex: 'ID',
     },
     {
-      title: 'MÃ ĐƠN VAY',
-      dataIndex: 'loan_id',
-      align: 'center',
-    },
-    {
-      title: 'NGƯỜI VAY',
+      title: 'TÊN SẢN PHẨM',
       dataIndex: 'name',
-      render: (val: string, record: any) => (
-        <>
-          <div>{val}</div>
-          <div>{record.phone}</div>
-        </>
+    },
+    {
+      title: 'ẢNH ĐẠI DIỆN',
+      dataIndex: 'imageUrl',
+      render: () => 'a',
+    },
+    {
+      title: 'MÔ TẢ',
+      dataIndex: 'description',
+    },
+    {
+      title: 'TRẠNG THÁI HIỂN THỊ',
+      dataIndex: 'status',
+    },
+    {
+      title: 'NHÃN DÁN',
+      dataIndex: 'label',
+    },
+    {
+      title: 'THỨ TỰ HIỂN THỊ',
+      dataIndex: 'displayOrder',
+    },
+    {
+      title: 'THAO TÁC',
+      key: 'action',
+      render: (_, record) => (
+        <Fragment>
+          <Button
+            type="primary"
+            // onClick={() => handleOpenModal(record)}
+          >
+            <EyeOutlined />
+          </Button>
+          <Button type="danger" onClick={() => handleRemvoeProduct(record.ID)}>
+            <DeleteOutlined />
+          </Button>
+        </Fragment>
       ),
-    },
-    {
-      title: 'HÌNH THỨC VAY',
-      dataIndex: 'borrow_method',
-      render: (val: string) => BORROW_METHOD_TYPES[val],
-    },
-    {
-      title: 'TÌNH TRẠNG',
-      dataIndex: 'status_debt',
-      render: (val: string) => DEBT_STATUS_NAME[val],
-    },
-    {
-      title: 'CẦN THANH TOÁN',
-      dataIndex: 'amount',
-      render: (val: number) => `${parseNumberWithDot(val)} VND`,
-    },
-    {
-      title: 'ĐÃ THANH TOÁN',
-      dataIndex: 'paid_amount',
-      render: (val: number) => `${parseNumberWithDot(val)} VND`,
-    },
-    {
-      title: 'SỐ NGÀY MUỘN',
-      dataIndex: 'num_day_late',
-      sorter: true,
-      sortDirections: ['descend', 'ascend'],
-    },
-    {
-      title: 'NGÀY ĐẾN HẠN',
-      dataIndex: 'payment_date',
-      sorter: true,
-      sortDirections: ['descend', 'ascend'],
-    },
-    {
-      title: 'NGÀY HẸN TRẢ',
-      dataIndex: 'appointment_date',
-      sorter: true,
-      sortDirections: ['descend', 'ascend'],
     },
   ];
 
@@ -174,13 +178,7 @@ const Accounting: FC<AccountingPropsType> = ({ location, history }) => {
     ...tableProps,
     rowKey: 'debt_id',
     columns,
-    pagination: {
-      ...tableProps.pagination,
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSizeOptions: ['20', '50', '100'],
-      showTotal: showTotal(tableProps.pagination),
-    },
+    pagination: false,
   };
 
   return (
@@ -195,10 +193,10 @@ const Accounting: FC<AccountingPropsType> = ({ location, history }) => {
               {timeFormatter(query.to_date, 'DD-MM-YYYY')}
             </Title>
           </Col>
-          {Object.keys(FILTER_OPTION).map((key) => (
+          {Object.keys(TABLE_FILTER_OPTION).map((key) => (
             <Col md={4} span={4} key={key}>
               <DropdownPicker
-                {...FILTER_OPTION[key]}
+                {...TABLE_FILTER_OPTION[key]}
                 defaultValues={defaultQuery[key]}
                 values={query[key]}
                 setValues={handleFilterTable(key)}
@@ -216,6 +214,8 @@ const Accounting: FC<AccountingPropsType> = ({ location, history }) => {
       </Card>
       <br />
       <Card>
+        {/* 
+        //@ts-ignore */}
         <Table {...tablePropsConfig} />
       </Card>
     </PageContainer>
