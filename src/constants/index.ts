@@ -182,3 +182,17 @@ export const OCCUPATIONS_MAP = {
   Mining: 'Khai khoáng',
   RealEstateIndustry: 'Bất động sản ',
 };
+
+export const TRANSACTION_TYPE = [
+  'LenderDisbursement',
+  'BorrowerDisbursement',
+  'BorrowerMonthlyRepayment',
+  'LenderMonthlyRepayment',
+  'BorrowerFullyRepayment',
+  'LenderFullyRepayment',
+  'BorrowerRefundExceedAmount',
+  'LenderRefundExceedAmount',
+  'LenderCompensation',
+  'BorrowerRefundPromotion',
+  'CollaboratorsCommission',
+];

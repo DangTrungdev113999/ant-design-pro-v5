@@ -20,7 +20,7 @@ interface WrapperProps {
 }
 interface WrapperConentProps {
   width?: string;
-  block?: any;
+  block?: boolean;
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -100,13 +100,13 @@ const statisticalMap = {
 interface DropdownPickerTypes {
   defaultValues: string;
   values: string;
+  setValues: (value: string) => void;
   label: string;
   m?: string;
   width?: string;
   block?: boolean;
   button?: boolean;
   radio?: boolean;
-  setValues?: any;
   blacklistReasons?: boolean;
   blackListStatus?: boolean;
   borrowMethod?: boolean;
@@ -149,7 +149,7 @@ const DropdownPicker: FC<DropdownPickerTypes> = ({
   const [dropdown, setDropdown] = useState(false);
   const [reset, setReset] = useState(false);
 
-  const handleDropdownVisibleChange = (flag: any) => setDropdown(flag);
+  const handleDropdownVisibleChange = (flag: boolean) => setDropdown(flag);
 
   const handlePick = (e: any) => {
     const { value } = e.target;

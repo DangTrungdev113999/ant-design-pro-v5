@@ -82,7 +82,7 @@ export function toQueryString(params: QueryParamsType) {
     .slice(0, -1);
 }
 
-export function timeFormatter(time: any, format = 'DD/MM/YYYY') {
+export function timeFormatter(time: string, format = 'DD/MM/YYYY') {
   return moment(time).format(format);
 }
 
@@ -93,22 +93,31 @@ export function updateLocationWithQuery(history: any, queryPrams: QueryParamsTyp
   });
 }
 
-export function showTotal(pagination: any) {
+export function showTotal(pagination: Object | any) {
   const pageSize = pagination?.pageSize || 10;
   const current = pagination?.current || 1;
   return () =>
     `${pageSize * current - pageSize + 1} - ${pageSize * current} trên tổng ${pagination?.total}`;
 }
 
-export const normalizeParams = (params: QueryParamsType) => {
+export const normalizeParams = (params: QueryParamsType, type = '') => {
+  if (type === 'mongo') {
+    const queryParams: QueryParamsType = {
+      ...params,
+      num_page: params.current,
+      page_size: params.pageSize,
+    };
+    delete queryParams.filters;
+    delete queryParams.current;
+    delete queryParams.pageSize;
+    return queryParams;
+  }
   const queryParams: QueryParamsType = {
     ...params,
-    num_page: params.current,
-    page_size: params.pageSize,
+    currentPage: params.current,
   };
-  delete params.filters;
+  delete queryParams.filters;
   delete queryParams.current;
-  delete queryParams.pageSize;
   return queryParams;
 };
 
